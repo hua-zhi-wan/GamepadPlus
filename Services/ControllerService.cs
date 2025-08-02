@@ -23,6 +23,7 @@ namespace AnotherGamepadPlus.Services
         public event Action<bool> YButtonStateChanged;
         public event Action<bool> LBStateChanged;
         public event Action<bool> RBStateChanged;
+        public event Action<bool> LButtonStateChanged;
 
         // 状态跟踪
         private bool _isConnected;
@@ -31,6 +32,7 @@ namespace AnotherGamepadPlus.Services
         private bool _xButtonPressed;
         private bool _lbPressed;
         private bool _rbPressed;
+        private bool _lButtonPressed;
 
         public void StartMonitoring()
         {
@@ -114,12 +116,21 @@ namespace AnotherGamepadPlus.Services
                         _lbPressed = lbPressed;
                         LBStateChanged?.Invoke(lbPressed);
                     }
+
                     // 处理RB按钮
                     var rbPressed = (state.Gamepad.wButtons & Constants.XINPUT_GAMEPAD_RIGHT_SHOULDER) != 0;
                     if (rbPressed != _rbPressed)
                     {
                         _rbPressed = rbPressed;
                         RBStateChanged?.Invoke(rbPressed);
+                    }
+
+                    // 处理L按钮
+                    var lButtonPressed = (state.Gamepad.wButtons & Constants.XINPUT_GAMEPAD_LEFT_THUMB) != 0;
+                    if (lButtonPressed != _lButtonPressed)
+                    {
+                        _lButtonPressed = lButtonPressed;
+                        LButtonStateChanged?.Invoke(lButtonPressed);
                     }
                 }
 
@@ -139,7 +150,6 @@ namespace AnotherGamepadPlus.Services
         {
             StopMonitoring();
             _cts?.Dispose();
-            _pollingTask?.Dispose();
         }
     }
 }

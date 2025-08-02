@@ -22,19 +22,19 @@
         </Grid.ColumnDefinitions>
 
         <!-- 手柄连接状态 -->
-        <Label Grid.Row="0" Grid.Column="0" Content="手柄状态:" Margin="5"/>
-        <Label Grid.Row="0" Grid.Column="1" x:Name="ControllerStatusLabel" Content="未连接" Margin="5" Foreground="Red"/>
+        <Label Grid.Row="0" Grid.Column="0" Content="Controller Status:" Margin="5"/>
+        <Label Grid.Row="0" Grid.Column="1" x:Name="ControllerStatusLabel" Content="Unconnected" Margin="5" Foreground="Red"/>
 
         <!-- 当前屏幕 -->
-        <Label Grid.Row="1" Grid.Column="0" Content="当前屏幕:" Margin="5"/>
-        <Label Grid.Row="1" Grid.Column="1" x:Name="CurrentScreenLabel" Content="未知" Margin="5"/>
+        <Label Grid.Row="1" Grid.Column="0" Content="Current Screen:" Margin="5"/>
+        <Label Grid.Row="1" Grid.Column="1" x:Name="CurrentScreenLabel" Content="Unknown" Margin="5"/>
 
         <!-- 鼠标位置 -->
-        <Label Grid.Row="2" Grid.Column="0" Content="鼠标位置:" Margin="5"/>
+        <Label Grid.Row="2" Grid.Column="0" Content="Mouse Position:" Margin="5"/>
         <Label Grid.Row="2" Grid.Column="1" x:Name="MousePositionLabel" Content="(0, 0)" Margin="5"/>
 
         <!-- 灵敏度设置 -->
-        <Label Grid.Row="3" Grid.Column="0" Content="灵敏度:" Margin="5"/>
+        <Label Grid.Row="3" Grid.Column="0" Content="Sensitivity:" Margin="5"/>
         <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal" Margin="5">
             <Slider x:Name="SensitivitySlider" Minimum="1" Maximum="30" Value="10.0" Width="200" 
                     ValueChanged="SensitivitySlider_ValueChanged"/>
@@ -42,7 +42,7 @@
         </StackPanel>
 
         <!-- 死区设置 -->
-        <Label Grid.Row="4" Grid.Column="0" Content="摇杆死区:" Margin="5"/>
+        <Label Grid.Row="4" Grid.Column="0" Content="Joystick Deadzone:" Margin="5"/>
         <StackPanel Grid.Row="4" Grid.Column="1" Orientation="Horizontal" Margin="5">
             <Slider x:Name="DeadZoneSlider" Minimum="0.0" Maximum="0.5" Value="0.1" Width="200"
                     ValueChanged="DeadZoneSlider_ValueChanged"/>
@@ -50,17 +50,71 @@
         </StackPanel>
 
         <!-- 操作说明 -->
-        <GroupBox Grid.Row="5" Grid.ColumnSpan="2" Header="操作说明" Margin="5">
+        <!-- <GroupBox Grid.Row="5" Grid.ColumnSpan="2" Header="Operating Instruction" Margin="5">
             <TextBlock TextWrapping="Wrap" Margin="5">
-                左摇杆: 控制鼠标移动<LineBreak />
-                A键: 鼠标左键<LineBreak />
-                B键: 鼠标右键<LineBreak />
-                X键: 鼠标中键<LineBreak />
-                按住左肩键(LB): 精确模式<LineBreak />
-                按住右肩键(RB): 快速模式<LineBreak />
-                左扳机键(LT): 鼠标滚轮上滚<LineBreak />
-                右扳机键(RT): 鼠标滚轮下滚<LineBreak />
+                Left Joystick: Controls mouse movement<LineBreak />
+                A Button / L Button: Left mouse click<LineBreak />
+                B Button: Right mouse click<LineBreak />
+                X Button: Middle mouse click<LineBreak />
+                Hold Left Shoulder Button (LB): Precision mode<LineBreak />
+                Hold Right Shoulder Button (RB): Fast mode<LineBreak />
+                Left Trigger (LT): Mouse wheel scroll up<LineBreak />
+                Right Trigger (RT): Mouse wheel scroll down<LineBreak />
             </TextBlock>
+        </GroupBox> -->
+        <!-- 操作说明 -->
+        <GroupBox Grid.Row="5" Grid.ColumnSpan="2" Header="Operating Instruction" Margin="5">
+            <Grid Margin="5">
+                <!-- 定义两列：操作项和说明 -->
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" MinWidth="180"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                
+                <!-- 行定义 - 自动适应高度以适应内容 -->
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- 左摇杆 -->
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Left Joystick:" FontWeight="Bold"/>
+                <TextBlock Grid.Row="0" Grid.Column="1" Text="Controls mouse movement"/>
+
+                <!-- A键/L键 -->
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="A Button / L Button:" FontWeight="Bold"/>
+                <TextBlock Grid.Row="1" Grid.Column="1" Text="Left mouse click"/>
+
+                <!-- B键 -->
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="B Button:" FontWeight="Bold"/>
+                <TextBlock Grid.Row="2" Grid.Column="1" Text="Right mouse click"/>
+
+                <!-- X键 -->
+                <TextBlock Grid.Row="3" Grid.Column="0" Text="X Button:" FontWeight="Bold"/>
+                <TextBlock Grid.Row="3" Grid.Column="1" Text="Middle mouse click"/>
+
+                <!-- 左肩键(LB) -->
+                <TextBlock Grid.Row="4" Grid.Column="0" Text="Hold Left Shoulder (LB):" FontWeight="Bold"/>
+                <TextBlock Grid.Row="4" Grid.Column="1" Text="Precision mode"/>
+
+                <!-- 右肩键(RB) -->
+                <TextBlock Grid.Row="5" Grid.Column="0" Text="Hold Right Shoulder (RB):" FontWeight="Bold"/>
+                <TextBlock Grid.Row="5" Grid.Column="1" Text="Fast mode"/>
+
+                <!-- 左扳机键(LT) -->
+                <TextBlock Grid.Row="6" Grid.Column="0" Text="Left Trigger (LT):" FontWeight="Bold"/>
+                <TextBlock Grid.Row="6" Grid.Column="1" Text="Mouse wheel scroll up"/>
+
+                <!-- 右扳机键(RT) -->
+                <TextBlock Grid.Row="7" Grid.Column="0" Text="Right Trigger (RT):" FontWeight="Bold"/>
+                <TextBlock Grid.Row="7" Grid.Column="1" Text="Mouse wheel scroll down"/>
+            </Grid>
         </GroupBox>
     </Grid>
 </Window>

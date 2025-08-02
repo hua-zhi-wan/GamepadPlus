@@ -18,6 +18,8 @@ namespace AnotherGamepadPlus.Helpers
         public const ushort XINPUT_GAMEPAD_Y = 0x8000;
         public const ushort XINPUT_GAMEPAD_LEFT_SHOULDER = 0x0100;
         public const ushort XINPUT_GAMEPAD_RIGHT_SHOULDER = 0x0200;
+        public const ushort XINPUT_GAMEPAD_LEFT_THUMB = 0x0040;
+        public const ushort XINPUT_GAMEPAD_RIGHT_THUMB = 0x0040;
 
         // 摇杆范围常量
         public const short MIN_THUMB_VALUE = -32768;

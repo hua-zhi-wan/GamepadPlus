@@ -41,9 +41,9 @@ namespace AnotherGamepadPlus.Views
             // 手柄连接状态变化
             _controllerService.ConnectionStatusChanged += (connected) =>
             {
-                Dispatcher.Invoke(() =>
+                Dispatcher.InvokeAsync(() =>
                 {
-                    ControllerStatusLabel.Content = connected ? "已连接" : "未连接";
+                    ControllerStatusLabel.Content = connected ? "Connected" : "Unconnected";
                     ControllerStatusLabel.Foreground = connected ? System.Windows.Media.Brushes.Green : System.Windows.Media.Brushes.Red;
                     
                     // 连接成功时震动提示
@@ -64,7 +64,7 @@ namespace AnotherGamepadPlus.Views
             // 摇杆移动
             _controllerService.LeftStickMoved += (x, y) =>
             {
-                Dispatcher.Invoke(() =>
+                Dispatcher.InvokeAsync(() =>
                 {
                     _mouseService.MoveMouse(x, y);
                 });
@@ -75,7 +75,7 @@ namespace AnotherGamepadPlus.Views
             // 左扳机键 (滚轮上)
             _controllerService.LeftTriggerChanged += (value) =>
             {
-                Dispatcher.Invoke(() =>
+                Dispatcher.InvokeAsync(() =>
                 {
                     if (value > triggerThreshold) // 阈值
                     {
@@ -87,7 +87,7 @@ namespace AnotherGamepadPlus.Views
             // 右扳机键 (滚轮下)
             _controllerService.RightTriggerChanged += (value) =>
             {
-                Dispatcher.Invoke(() =>
+                Dispatcher.InvokeAsync(() =>
                 {
                     if (value > triggerThreshold) // 阈值
                     {
@@ -99,7 +99,19 @@ namespace AnotherGamepadPlus.Views
             // A键 (左键)
             _controllerService.AButtonStateChanged += (pressed) =>
             {
-                Dispatcher.Invoke(() =>
+                Dispatcher.InvokeAsync(() =>
+                {
+                    if (pressed)
+                        MouseService.LeftButtonDown();
+                    else
+                        MouseService.LeftButtonUp();
+                });
+            };
+
+            // L键 (左键)
+            _controllerService.LButtonStateChanged += (pressed) =>
+            {
+                Dispatcher.InvokeAsync(() =>
                 {
                     if (pressed)
                         MouseService.LeftButtonDown();
@@ -111,7 +123,7 @@ namespace AnotherGamepadPlus.Views
             // B键 (右键)
             _controllerService.BButtonStateChanged += (pressed) =>
             {
-                Dispatcher.Invoke(() =>
+                Dispatcher.InvokeAsync(() =>
                 {
                     if (pressed)
                         MouseService.RightButtonDown();
@@ -123,7 +135,7 @@ namespace AnotherGamepadPlus.Views
             // X键 (中键)
             _controllerService.XButtonStateChanged += (pressed) =>
             {
-                Dispatcher.Invoke(() =>
+                Dispatcher.InvokeAsync(() =>
                 {
                     if (pressed)
                         MouseService.MiddleButtonDown();
@@ -135,7 +147,7 @@ namespace AnotherGamepadPlus.Views
             // LB键 (精确模式)
             _controllerService.LBStateChanged += (pressed) =>
             {
-                Dispatcher.Invoke(() =>
+                Dispatcher.InvokeAsync(() =>
                 {
                     if (pressed)
                         _mouseService.SensitivityFactor = 1 / 3f;
@@ -147,7 +159,7 @@ namespace AnotherGamepadPlus.Views
             // RB键 (快速模式)
             _controllerService.RBStateChanged += (pressed) =>
             {
-                Dispatcher.Invoke(() =>
+                Dispatcher.InvokeAsync(() =>
                 {
                     if (pressed)
                         _mouseService.SensitivityFactor = 3f;
@@ -159,7 +171,7 @@ namespace AnotherGamepadPlus.Views
             // 屏幕变化
             _screenService.CurrentScreenChanged += (screen) =>
             {
-                Dispatcher.Invoke(() =>
+                Dispatcher.InvokeAsync(() =>
                 {
                     CurrentScreenLabel.Content = screen.DeviceName;
                 });
