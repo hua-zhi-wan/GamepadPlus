@@ -6,7 +6,8 @@
         xmlns:local="clr-namespace:AnotherGamepadPlus"
         mc:Ignorable="d"
         Title="AGP" Height="400" Width="500"
-        Closing="Window_Closing">
+        Closing="Window_Closing"
+        ResizeMode="CanMinimize">
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -49,19 +50,6 @@
             <Label x:Name="DeadZoneValueLabel" Content="0.1" Width="50" HorizontalAlignment="Center"/>
         </StackPanel>
 
-        <!-- 操作说明 -->
-        <!-- <GroupBox Grid.Row="5" Grid.ColumnSpan="2" Header="Operating Instruction" Margin="5">
-            <TextBlock TextWrapping="Wrap" Margin="5">
-                Left Joystick: Controls mouse movement<LineBreak />
-                A Button / L Button: Left mouse click<LineBreak />
-                B Button: Right mouse click<LineBreak />
-                X Button: Middle mouse click<LineBreak />
-                Hold Left Shoulder Button (LB): Precision mode<LineBreak />
-                Hold Right Shoulder Button (RB): Fast mode<LineBreak />
-                Left Trigger (LT): Mouse wheel scroll up<LineBreak />
-                Right Trigger (RT): Mouse wheel scroll down<LineBreak />
-            </TextBlock>
-        </GroupBox> -->
         <!-- 操作说明 -->
         <GroupBox Grid.Row="5" Grid.ColumnSpan="2" Header="Operating Instruction" Margin="5">
             <Grid Margin="5">

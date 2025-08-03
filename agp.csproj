@@ -8,6 +8,11 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
+    <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
+  <ItemGroup>
+    <!-- 定义资源文件 -->
+    <Resource Include="Resources\agp.ico" />
+  </ItemGroup>
 
 </Project>

@@ -12,9 +12,12 @@ namespace AnotherGamepadPlus.Views
         private readonly ScreenService _screenService;
         private readonly DispatcherTimer _mousePositionTimer;
 
+        private NotifyIcon _notifyIcon;
+
         public MainWindow()
         {
             InitializeComponent();
+            InitializeNotifyIcon();
 
             // 初始化服务
             _screenService = new ScreenService();
@@ -36,6 +39,111 @@ namespace AnotherGamepadPlus.Views
             _controllerService.StartMonitoring();
         }
 
+        private void InitializeNotifyIcon()
+        {
+            _notifyIcon = new NotifyIcon
+            {
+                // 设置图标（需要添加一个图标文件到项目中，并设置为"资源"）
+                Icon = System.Drawing.Icon.ExtractAssociatedIcon(System.Reflection.Assembly.GetExecutingAssembly().Location),
+
+                // 设置托盘图标显示的文本
+                Text = "AGP",
+
+                // 允许显示托盘图标
+                Visible = true
+            };
+
+            // 创建右键菜单
+            var contextMenu = new ContextMenuStrip();
+
+            // 添加"显示"菜单项
+            var showItem = new ToolStripMenuItem("Show Window");
+            showItem.Click += ShowItem_Click;
+            contextMenu.Items.Add(showItem);
+
+            // 添加"显示"菜单项
+            var hideItem = new ToolStripMenuItem("Hide to Tray");
+            hideItem.Click += HideItem_Click;
+            contextMenu.Items.Add(hideItem);
+
+            // 添加"退出"菜单项
+            var exitItem = new ToolStripMenuItem("Exit");
+            exitItem.Click += ExitItem_Click;
+            contextMenu.Items.Add(exitItem);
+
+            // 关联右键菜单
+            _notifyIcon.ContextMenuStrip = contextMenu;
+
+            // 双击托盘图标显示窗口
+            _notifyIcon.DoubleClick += NotifyIcon_DoubleClick;
+
+            // 设置窗口状态变化时的处理
+            this.StateChanged += MainWindow_StateChanged;
+        }
+
+        private void MainWindow_StateChanged(object sender, EventArgs e)
+        {
+            // 当窗口最小化时
+            if (this.WindowState == WindowState.Minimized)
+            {
+                this.ShowInTaskbar = false;
+            }
+            else
+            {
+                this.ShowInTaskbar = true;
+            }
+        }
+
+        private void NotifyIcon_DoubleClick(object? sender, EventArgs e)
+        {
+            // 显示窗口并恢复状态
+            ShowAndRestoreWindow();
+        }
+
+        private void ShowItem_Click(object? sender, EventArgs e)
+        {
+            // 显示窗口并恢复状态
+            ShowAndRestoreWindow();
+        }
+
+        private void HideItem_Click(object? sender, EventArgs e)
+        {
+            // 最小化窗口到托盘
+            this.WindowState = WindowState.Minimized;
+            this.ShowInTaskbar = false;
+        }
+
+        private void ExitItem_Click(object? sender, EventArgs e)
+        {
+
+            // 关闭应用程序
+            System.Windows.Application.Current.Shutdown();
+        }
+
+        private void ShowAndRestoreWindow()
+        {
+            // 显示窗口
+            this.Show();
+
+            // 恢复窗口状态（如果需要）
+            if (this.WindowState == WindowState.Minimized)
+            {
+                this.WindowState = WindowState.Normal;
+            }
+
+            // 激活窗口
+            this.Activate();
+        }
+
+        // // 重写关闭窗口方法，改为最小化到托盘
+        protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+        {
+            // 清理托盘图标
+            _notifyIcon.Dispose();
+
+            base.OnClosing(e);
+        }
+
         private void RegisterEventHandlers()
         {
             // 手柄连接状态变化
@@ -45,7 +153,7 @@ namespace AnotherGamepadPlus.Views
                 {
                     ControllerStatusLabel.Content = connected ? "Connected" : "Unconnected";
                     ControllerStatusLabel.Foreground = connected ? System.Windows.Media.Brushes.Green : System.Windows.Media.Brushes.Red;
-                    
+
                     // 连接成功时震动提示
                     if (connected)
                     {
