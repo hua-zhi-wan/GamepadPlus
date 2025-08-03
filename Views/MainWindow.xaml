@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AnotherGamepadPlus"
         mc:Ignorable="d"
-        Title="AGP" Height="400" Width="500"
+        Title="Another-Gamepad-Plus" Height="420" Width="500"
         Closing="Window_Closing"
         ResizeMode="CanMinimize">
     <Grid Margin="10">
@@ -16,6 +16,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -104,5 +105,16 @@
                 <TextBlock Grid.Row="7" Grid.Column="1" Text="Mouse wheel scroll down"/>
             </Grid>
         </GroupBox>
+
+        <!-- Github Info -->
+        <Label Grid.Row="6" Grid.Column="0" Content="Project Info:" Margin="5" Foreground="Green"/>
+        <TextBlock Grid.Row="6" Grid.Column="1" Margin="5" Foreground="Green">
+            <Hyperlink NavigateUri="https://github.com/hua-zhi-wan/another-gamepad-plus" 
+                    RequestNavigate="Hyperlink_RequestNavigate"
+                    Foreground="Green">
+                hua-zhi-wan/another-gamepad-plus@github
+            </Hyperlink>
+        </TextBlock>
+
     </Grid>
 </Window>
