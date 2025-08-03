@@ -7,6 +7,10 @@ namespace AnotherGamepadPlus.Views
 {
     public partial class MainWindow : Window
     {
+        private bool isPaused = false;
+        private bool backPressedTime = false;
+        private bool startPressedTime = false;
+
         private readonly ControllerService _controllerService;
         private readonly MouseService _mouseService;
         private readonly ScreenService _screenService;
@@ -57,14 +61,14 @@ namespace AnotherGamepadPlus.Views
             var contextMenu = new ContextMenuStrip();
 
             // 添加"显示"菜单项
-            var showItem = new ToolStripMenuItem("Show Window");
+            var showItem = new ToolStripMenuItem("Show / Hide to Tray");
             showItem.Click += ShowItem_Click;
             contextMenu.Items.Add(showItem);
 
-            // 添加"显示"菜单项
-            var hideItem = new ToolStripMenuItem("Hide to Tray");
-            hideItem.Click += HideItem_Click;
-            contextMenu.Items.Add(hideItem);
+            // 添加"暂停"菜单项
+            var pauseItem = new ToolStripMenuItem("Pause / Resume");
+            pauseItem.Click += PauseItem_Click;
+            contextMenu.Items.Add(pauseItem);
 
             // 添加"退出"菜单项
             var exitItem = new ToolStripMenuItem("Exit");
@@ -96,21 +100,28 @@ namespace AnotherGamepadPlus.Views
 
         private void NotifyIcon_DoubleClick(object? sender, EventArgs e)
         {
-            // 显示窗口并恢复状态
-            ShowAndRestoreWindow();
+            ShowItem_Click(sender, e);
         }
 
         private void ShowItem_Click(object? sender, EventArgs e)
         {
-            // 显示窗口并恢复状态
-            ShowAndRestoreWindow();
+            // 如果窗口已最小化，则显示并恢复状态
+            if (this.WindowState == WindowState.Minimized)
+            {
+                // 显示窗口并恢复状态
+                ShowAndRestoreWindow();
+            }
+            else
+            {
+                // 如果窗口已显示，则最小化到托盘
+                this.WindowState = WindowState.Minimized;
+                this.ShowInTaskbar = false;
+            }
         }
 
-        private void HideItem_Click(object? sender, EventArgs e)
+        private void PauseItem_Click(object? sender, EventArgs e)
         {
-            // 最小化窗口到托盘
-            this.WindowState = WindowState.Minimized;
-            this.ShowInTaskbar = false;
+            ChangePausedStatus();
         }
 
         private void ExitItem_Click(object? sender, EventArgs e)
@@ -144,8 +155,55 @@ namespace AnotherGamepadPlus.Views
             base.OnClosing(e);
         }
 
+        void ChangePausedStatus()
+        {
+            isPaused = !isPaused;
+            PausedStatusLabel.Content = isPaused ? "Paused" : "Running";
+            PausedStatusLabel.Foreground = isPaused ? System.Windows.Media.Brushes.Orange : System.Windows.Media.Brushes.Green;
+            if (!isPaused)
+            {
+                _controllerService.Vibrate(30000, 30000, 200);
+            }
+        }
+
         private void RegisterEventHandlers()
         {
+            // Back键状态
+            _controllerService.BackButtonStateChanged += (pressed) =>
+            {
+                Dispatcher.InvokeAsync(() =>
+                {
+                    if (pressed)
+                        backPressedTime = true;
+                    else
+                        backPressedTime = false;
+                    CheckPauseCombo();
+                });
+            };
+
+            // Start键状态
+            _controllerService.StartButtonStateChanged += (pressed) =>
+            {
+                Dispatcher.InvokeAsync(() =>
+                {
+                    if (pressed)
+                        startPressedTime = true;
+                    else
+                        startPressedTime = false;
+                    CheckPauseCombo();
+                });
+            };
+
+            void CheckPauseCombo()
+            {
+                if (backPressedTime && startPressedTime)
+                {
+                    backPressedTime = false;
+                    startPressedTime = false;
+                    ChangePausedStatus();
+                }
+            }
+
             // 手柄连接状态变化
             _controllerService.ConnectionStatusChanged += (connected) =>
             {
@@ -157,14 +215,7 @@ namespace AnotherGamepadPlus.Views
                     // 连接成功时震动提示
                     if (connected)
                     {
-                        _controllerService.SetVibration(30000, 30000);
-                        DispatcherTimer vibrateTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(200) };
-                        vibrateTimer.Tick += (s, e) =>
-                        {
-                            _controllerService.SetVibration(0, 0);
-                            vibrateTimer.Stop();
-                        };
-                        vibrateTimer.Start();
+                        _controllerService.Vibrate(30000, 30000, 200);
                     }
                 });
             };
@@ -174,7 +225,8 @@ namespace AnotherGamepadPlus.Views
             {
                 Dispatcher.InvokeAsync(() =>
                 {
-                    _mouseService.MoveMouse(x, y);
+                    if (!isPaused)
+                        _mouseService.MoveMouse(x, y);
                 });
             };
 
@@ -185,7 +237,7 @@ namespace AnotherGamepadPlus.Views
             {
                 Dispatcher.InvokeAsync(() =>
                 {
-                    if (value > triggerThreshold) // 阈值
+                    if (!isPaused && value > triggerThreshold)
                     {
                         MouseService.ScrollWheel((int)MathTool.MapValueClamped(value - triggerThreshold, triggerThreshold, 255f, 0f, 80f)); // 上滚
                     }
@@ -197,7 +249,7 @@ namespace AnotherGamepadPlus.Views
             {
                 Dispatcher.InvokeAsync(() =>
                 {
-                    if (value > triggerThreshold) // 阈值
+                    if (!isPaused && value > triggerThreshold)
                     {
                         MouseService.ScrollWheel(-(int)MathTool.MapValueClamped(value - triggerThreshold, triggerThreshold, 255f, 0f, 80f)); // 下滚
                     }
@@ -209,10 +261,13 @@ namespace AnotherGamepadPlus.Views
             {
                 Dispatcher.InvokeAsync(() =>
                 {
-                    if (pressed)
-                        MouseService.LeftButtonDown();
-                    else
-                        MouseService.LeftButtonUp();
+                    if (!isPaused)
+                    {
+                        if (pressed)
+                            MouseService.LeftButtonDown();
+                        else
+                            MouseService.LeftButtonUp();
+                    }
                 });
             };
 
@@ -221,10 +276,13 @@ namespace AnotherGamepadPlus.Views
             {
                 Dispatcher.InvokeAsync(() =>
                 {
-                    if (pressed)
-                        MouseService.LeftButtonDown();
-                    else
-                        MouseService.LeftButtonUp();
+                    if (!isPaused)
+                    {
+                        if (pressed)
+                            MouseService.LeftButtonDown();
+                        else
+                            MouseService.LeftButtonUp();
+                    }
                 });
             };
 
@@ -233,10 +291,13 @@ namespace AnotherGamepadPlus.Views
             {
                 Dispatcher.InvokeAsync(() =>
                 {
-                    if (pressed)
-                        MouseService.RightButtonDown();
-                    else
-                        MouseService.RightButtonUp();
+                    if (!isPaused)
+                    {
+                        if (pressed)
+                            MouseService.RightButtonDown();
+                        else
+                            MouseService.RightButtonUp();
+                    }
                 });
             };
 
@@ -245,10 +306,13 @@ namespace AnotherGamepadPlus.Views
             {
                 Dispatcher.InvokeAsync(() =>
                 {
-                    if (pressed)
-                        MouseService.MiddleButtonDown();
-                    else
-                        MouseService.MiddleButtonUp();
+                    if (!isPaused)
+                    {
+                        if (pressed)
+                            MouseService.MiddleButtonDown();
+                        else
+                            MouseService.MiddleButtonUp();
+                    }
                 });
             };
 

@@ -5,9 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AnotherGamepadPlus"
         mc:Ignorable="d"
-        Title="Another-Gamepad-Plus" Height="420" Width="500"
+        Title="Another-Gamepad-Plus" Height="450" Width="500"
         Closing="Window_Closing"
-        ResizeMode="CanMinimize">
+        ResizeMode="NoResize">
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -26,6 +26,7 @@
         <!-- 手柄连接状态 -->
         <Label Grid.Row="0" Grid.Column="0" Content="Controller Status:" Margin="5"/>
         <Label Grid.Row="0" Grid.Column="1" x:Name="ControllerStatusLabel" Content="Unconnected" Margin="5" Foreground="Red"/>
+        <Label Grid.Row="0" Grid.Column="1" x:Name="PausedStatusLabel" Content="Running" Margin="100 5" Foreground="Red"/>
 
         <!-- 当前屏幕 -->
         <Label Grid.Row="1" Grid.Column="0" Content="Current Screen:" Margin="5"/>
@@ -70,6 +71,7 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
                 <!-- 左摇杆 -->
@@ -103,6 +105,10 @@
                 <!-- 右扳机键(RT) -->
                 <TextBlock Grid.Row="7" Grid.Column="0" Text="Right Trigger (RT):" FontWeight="Bold"/>
                 <TextBlock Grid.Row="7" Grid.Column="1" Text="Mouse wheel scroll down"/>
+
+                <!-- Start + Back 键 -->
+                <TextBlock Grid.Row="8" Grid.Column="0" Text="Back Button + Start Button:" FontWeight="Bold"/>
+                <TextBlock Grid.Row="8" Grid.Column="1" Text="Pause / Resume"/>
             </Grid>
         </GroupBox>
 

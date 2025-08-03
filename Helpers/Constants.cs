@@ -12,6 +12,8 @@ namespace AnotherGamepadPlus.Helpers
         public const uint MOUSEEVENTF_WHEEL = 0x0800;
 
         // 手柄按钮常量
+        public const ushort XINPUT_GAMEPAD_START = 0x0010;
+        public const ushort XINPUT_GAMEPAD_BACK = 0x0020;
         public const ushort XINPUT_GAMEPAD_A = 0x1000;
         public const ushort XINPUT_GAMEPAD_B = 0x2000;
         public const ushort XINPUT_GAMEPAD_X = 0x4000;

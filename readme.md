@@ -28,6 +28,8 @@ Another-Gamepad-Plus is a tool designed to bridge your gamepad and mouse functio
 
 - **Right Trigger (RT)**: Mouse wheel scroll down
 
+- **Back Button + Start Button**: Pause / Resume
+
 ### Customization
 
 The tool supports adjustments for:

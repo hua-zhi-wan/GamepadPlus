@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Threading;
 using AnotherGamepadPlus.Helpers;
 
 namespace AnotherGamepadPlus.Services
@@ -17,6 +18,8 @@ namespace AnotherGamepadPlus.Services
         public event Action<float, float> LeftStickMoved;
         public event Action<byte> LeftTriggerChanged;
         public event Action<byte> RightTriggerChanged;
+        public event Action<bool> StartButtonStateChanged;
+        public event Action<bool> BackButtonStateChanged;
         public event Action<bool> AButtonStateChanged;
         public event Action<bool> BButtonStateChanged;
         public event Action<bool> XButtonStateChanged;
@@ -27,6 +30,8 @@ namespace AnotherGamepadPlus.Services
 
         // 状态跟踪
         private bool _isConnected;
+        private bool _startButtonPressed;
+        private bool _backButtonPressed;
         private bool _aButtonPressed;
         private bool _bButtonPressed;
         private bool _xButtonPressed;
@@ -60,6 +65,20 @@ namespace AnotherGamepadPlus.Services
             NativeMethods.XInputSetState(_controllerIndex, ref vibration);
         }
 
+        // 震动
+        public void Vibrate(ushort leftMotor, ushort rightMotor, int duration)
+        {
+            if (!_isConnected) return;
+            SetVibration(leftMotor, rightMotor);
+            DispatcherTimer vibrateTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(duration) };
+            vibrateTimer.Tick += (s, e) =>
+            {
+                SetVibration(0, 0);
+                vibrateTimer.Stop();
+            };
+            vibrateTimer.Start();
+        }
+
         private void PollControllerState()
         {
             while (_isRunning)
@@ -84,6 +103,23 @@ namespace AnotherGamepadPlus.Services
                     // 处理扳机键
                     LeftTriggerChanged?.Invoke(state.Gamepad.bLeftTrigger);
                     RightTriggerChanged?.Invoke(state.Gamepad.bRightTrigger);
+
+
+                    // 处理Start按钮
+                    var startPressed = (state.Gamepad.wButtons & Constants.XINPUT_GAMEPAD_START) != 0;
+                    if (startPressed != _startButtonPressed)
+                    {
+                        _startButtonPressed = startPressed;
+                        StartButtonStateChanged?.Invoke(startPressed);
+                    }
+
+                    // 处理Back按钮
+                    var backPressed = (state.Gamepad.wButtons & Constants.XINPUT_GAMEPAD_BACK) != 0;
+                    if (backPressed != _backButtonPressed)
+                    {
+                        _backButtonPressed = backPressed;
+                        BackButtonStateChanged?.Invoke(backPressed);
+                    }
 
                     // 处理A按钮
                     var aPressed = (state.Gamepad.wButtons & Constants.XINPUT_GAMEPAD_A) != 0;
