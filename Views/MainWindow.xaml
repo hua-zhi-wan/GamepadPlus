@@ -26,7 +26,7 @@
         <!-- 手柄连接状态 -->
         <Label Grid.Row="0" Grid.Column="0" Content="Controller Status:" Margin="5"/>
         <Label Grid.Row="0" Grid.Column="1" x:Name="ControllerStatusLabel" Content="Unconnected" Margin="5" Foreground="Red"/>
-        <Label Grid.Row="0" Grid.Column="1" x:Name="PausedStatusLabel" Content="Running" Margin="100 5" Foreground="Red"/>
+        <Label Grid.Row="0" Grid.Column="1" x:Name="PausedStatusLabel" Content="Running" Margin="100 5" Foreground="Blue"/>
 
         <!-- 当前屏幕 -->
         <Label Grid.Row="1" Grid.Column="0" Content="Current Screen:" Margin="5"/>

@@ -1,6 +1,3 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Threading;
 using AnotherGamepadPlus.Helpers;
 
@@ -23,7 +20,7 @@ namespace AnotherGamepadPlus.Services
         public event Action<bool> AButtonStateChanged;
         public event Action<bool> BButtonStateChanged;
         public event Action<bool> XButtonStateChanged;
-        public event Action<bool> YButtonStateChanged;
+        // public event Action<bool> YButtonStateChanged;
         public event Action<bool> LBStateChanged;
         public event Action<bool> RBStateChanged;
         public event Action<bool> LButtonStateChanged;
@@ -50,6 +47,7 @@ namespace AnotherGamepadPlus.Services
         {
             _isRunning = false;
             _cts?.Cancel();
+            _pollingTask?.Wait();
         }
 
         public void SetVibration(ushort leftMotor, ushort rightMotor)

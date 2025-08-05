@@ -16,11 +16,24 @@ namespace AnotherGamepadPlus.Views
         private readonly ScreenService _screenService;
         private readonly DispatcherTimer _mousePositionTimer;
 
-        private NotifyIcon _notifyIcon;
+        private readonly NotifyIcon _notifyIcon;
 
         public MainWindow()
         {
             InitializeComponent();
+
+            // 初始化托盘图标
+            _notifyIcon = new NotifyIcon
+            {
+                // 设置图标（需要添加一个图标文件到项目中，并设置为"资源"）
+                Icon = System.Drawing.Icon.ExtractAssociatedIcon(System.Reflection.Assembly.GetExecutingAssembly().Location),
+
+                // 设置托盘图标显示的文本
+                Text = "AGP",
+
+                // 允许显示托盘图标
+                Visible = true
+            };
             InitializeNotifyIcon();
 
             // 初始化服务
@@ -45,17 +58,6 @@ namespace AnotherGamepadPlus.Views
 
         private void InitializeNotifyIcon()
         {
-            _notifyIcon = new NotifyIcon
-            {
-                // 设置图标（需要添加一个图标文件到项目中，并设置为"资源"）
-                Icon = System.Drawing.Icon.ExtractAssociatedIcon(System.Reflection.Assembly.GetExecutingAssembly().Location),
-
-                // 设置托盘图标显示的文本
-                Text = "AGP",
-
-                // 允许显示托盘图标
-                Visible = true
-            };
 
             // 创建右键菜单
             var contextMenu = new ContextMenuStrip();
@@ -98,12 +100,12 @@ namespace AnotherGamepadPlus.Views
             }
         }
 
-        private void NotifyIcon_DoubleClick(object? sender, EventArgs e)
+        private void NotifyIcon_DoubleClick(object sender, EventArgs e)
         {
             ShowItem_Click(sender, e);
         }
 
-        private void ShowItem_Click(object? sender, EventArgs e)
+        private void ShowItem_Click(object sender, EventArgs e)
         {
             // 如果窗口已最小化，则显示并恢复状态
             if (this.WindowState == WindowState.Minimized)
@@ -119,12 +121,12 @@ namespace AnotherGamepadPlus.Views
             }
         }
 
-        private void PauseItem_Click(object? sender, EventArgs e)
+        private void PauseItem_Click(object sender, EventArgs e)
         {
             ChangePausedStatus();
         }
 
-        private void ExitItem_Click(object? sender, EventArgs e)
+        private void ExitItem_Click(object sender, EventArgs e)
         {
 
             // 关闭应用程序
@@ -159,7 +161,7 @@ namespace AnotherGamepadPlus.Views
         {
             isPaused = !isPaused;
             PausedStatusLabel.Content = isPaused ? "Paused" : "Running";
-            PausedStatusLabel.Foreground = isPaused ? System.Windows.Media.Brushes.Orange : System.Windows.Media.Brushes.Green;
+            PausedStatusLabel.Foreground = isPaused ? System.Windows.Media.Brushes.Orange : System.Windows.Media.Brushes.Blue;
             if (!isPaused)
             {
                 _controllerService.Vibrate(30000, 30000, 200);
