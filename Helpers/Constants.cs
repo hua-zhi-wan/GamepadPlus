@@ -3,13 +3,13 @@ namespace AnotherGamepadPlus.Helpers
     internal static class Constants
     {
         // 鼠标事件常量
-        public const uint MOUSEEVENTF_LEFTDOWN = 0x02;
-        public const uint MOUSEEVENTF_LEFTUP = 0x04;
-        public const uint MOUSEEVENTF_RIGHTDOWN = 0x08;
-        public const uint MOUSEEVENTF_RIGHTUP = 0x10;
-        public const uint MOUSEEVENTF_MIDDLEDOWN = 0x20;
-        public const uint MOUSEEVENTF_MIDDLEUP = 0x40;
-        public const uint MOUSEEVENTF_WHEEL = 0x0800;
+        // public const uint MOUSEEVENTF_LEFTDOWN = 0x02;
+        // public const uint MOUSEEVENTF_LEFTUP = 0x04;
+        // public const uint MOUSEEVENTF_RIGHTDOWN = 0x08;
+        // public const uint MOUSEEVENTF_RIGHTUP = 0x10;
+        // public const uint MOUSEEVENTF_MIDDLEDOWN = 0x20;
+        // public const uint MOUSEEVENTF_MIDDLEUP = 0x40;
+        // public const uint MOUSEEVENTF_WHEEL = 0x0800;
 
         // 手柄按钮常量
         public const ushort XINPUT_GAMEPAD_START = 0x0010;

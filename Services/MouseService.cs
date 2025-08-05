@@ -1,6 +1,4 @@
-using System;
-using System.Drawing;
-using System.Windows.Forms;
+using System.Runtime.InteropServices;
 using AnotherGamepadPlus.Helpers;
 
 namespace AnotherGamepadPlus.Services
@@ -37,61 +35,81 @@ namespace AnotherGamepadPlus.Services
 
         public void MoveMouse(float xDelta, float yDelta)
         {
-            // 应用死区过滤
+            // 原有移动逻辑保持不变
             float magnitude = MathF.Sqrt(xDelta * xDelta + yDelta * yDelta);
             if (magnitude < _deadZone) return;
 
-            // 重新计算死区映射
             float scale = (magnitude - _deadZone) / (1.0f - _deadZone);
             xDelta = xDelta / magnitude * scale;
             yDelta = yDelta / magnitude * scale;
 
-            // 获取当前鼠标位置
             var currentPos = Cursor.Position;
-
-            // 计算新位置 Y轴反转以符合直觉
             int newX = currentPos.X + (int)(xDelta * _sensitivity * _sensitivity_factor);
             int newY = currentPos.Y - (int)(yDelta * _sensitivity * _sensitivity_factor);
-
-            // 调整位置以适应多屏幕
             var adjustedPos = _screenService.AdjustPositionToScreens(new Point(newX, newY));
-
-            // 设置新位置
             NativeMethods.SetCursorPos(adjustedPos.X, adjustedPos.Y);
+        }
+
+        // 构造鼠标输入事件
+        private static void SendMouseInput(MouseEventFlags flags, uint data = 0)
+        {
+            var input = new INPUT[]
+            {
+                new INPUT
+                {
+                    type = InputType.INPUT_MOUSE,
+                    mi = new MouseInputUnion
+                    {
+                        mi = new MOUSEINPUT
+                        {
+                            dx = 0,
+                            dy = 0,
+                            mouseData = data,
+                            dwFlags = flags,
+                            time = 0,
+                            dwExtraInfo = UIntPtr.Zero
+                        }
+                    }
+                }
+            };
+
+            NativeMethods.SendInput((uint)input.Length, input, Marshal.SizeOf(typeof(INPUT)));
         }
 
         public static void LeftButtonDown()
         {
-            NativeMethods.mouse_event(Constants.MOUSEEVENTF_LEFTDOWN, 0, 0, 0, UIntPtr.Zero);
+            SendMouseInput(MouseEventFlags.MOUSEEVENTF_LEFTDOWN);
         }
 
         public static void LeftButtonUp()
         {
-            NativeMethods.mouse_event(Constants.MOUSEEVENTF_LEFTUP, 0, 0, 0, UIntPtr.Zero);
+            SendMouseInput(MouseEventFlags.MOUSEEVENTF_LEFTUP);
         }
 
         public static void RightButtonDown()
         {
-            NativeMethods.mouse_event(Constants.MOUSEEVENTF_RIGHTDOWN, 0, 0, 0, UIntPtr.Zero);
+            SendMouseInput(MouseEventFlags.MOUSEEVENTF_RIGHTDOWN);
         }
 
         public static void RightButtonUp()
         {
-            NativeMethods.mouse_event(Constants.MOUSEEVENTF_RIGHTUP, 0, 0, 0, UIntPtr.Zero);
+            SendMouseInput(MouseEventFlags.MOUSEEVENTF_RIGHTUP);
         }
+
         public static void MiddleButtonDown()
         {
-            NativeMethods.mouse_event(Constants.MOUSEEVENTF_MIDDLEDOWN, 0, 0, 0, UIntPtr.Zero);
+            SendMouseInput(MouseEventFlags.MOUSEEVENTF_MIDDLEDOWN);
         }
 
         public static void MiddleButtonUp()
         {
-            NativeMethods.mouse_event(Constants.MOUSEEVENTF_MIDDLEUP, 0, 0, 0, UIntPtr.Zero);
+            SendMouseInput(MouseEventFlags.MOUSEEVENTF_MIDDLEUP);
         }
 
         public static void ScrollWheel(int delta)
         {
-            NativeMethods.mouse_event(Constants.MOUSEEVENTF_WHEEL, 0, 0, (uint)delta, UIntPtr.Zero);
+            // 滚轮值以120为单位
+            SendMouseInput(MouseEventFlags.MOUSEEVENTF_WHEEL, (uint)delta);
         }
 
         public static Point GetCurrentPosition()
