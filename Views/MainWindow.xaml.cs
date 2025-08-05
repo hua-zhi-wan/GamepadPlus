@@ -22,6 +22,9 @@ namespace AnotherGamepadPlus.Views
         {
             InitializeComponent();
 
+            // 设置窗口标题为版本号
+            this.Title += $" - {VersionInfo.VersionWithPrefix}";
+
             // 初始化托盘图标
             _notifyIcon = new NotifyIcon
             {
@@ -54,6 +57,21 @@ namespace AnotherGamepadPlus.Views
 
             // 开始监控手柄
             _controllerService.StartMonitoring();
+
+            // 绑定设置到UI控件
+            BindSettingsToControls();
+        }
+
+
+        private void BindSettingsToControls()
+        {
+            // 假设你有这些TrackBar控件
+            DeadZoneSlider.Value = _mouseService.DeadZone;
+            SensitivitySlider.Value = _mouseService.Sensitivity;
+
+            // 显示当前值的标签
+            DeadZoneValueLabel.Content = _mouseService.DeadZone.ToString("0.0");
+            SensitivityValueLabel.Content = _mouseService.Sensitivity.ToString("0");
         }
 
         private void InitializeNotifyIcon()
@@ -363,8 +381,8 @@ namespace AnotherGamepadPlus.Views
         {
             if (_mouseService != null && SensitivityValueLabel != null)
             {
-                _mouseService.Sensitivity = (float)e.NewValue;
-                SensitivityValueLabel.Content = e.NewValue.ToString("0.0");
+                _mouseService.Sensitivity = MathF.Round((float)e.NewValue, 0);
+                SensitivityValueLabel.Content = _mouseService.Sensitivity.ToString("0");
             }
         }
 
@@ -372,8 +390,8 @@ namespace AnotherGamepadPlus.Views
         {
             if (_mouseService != null && DeadZoneValueLabel != null)
             {
-                _mouseService.DeadZone = (float)e.NewValue;
-                DeadZoneValueLabel.Content = e.NewValue.ToString("0.0");
+                _mouseService.DeadZone = MathF.Round((float)e.NewValue, 1);
+                DeadZoneValueLabel.Content = _mouseService.DeadZone.ToString("0.0");
             }
         }
 
@@ -389,6 +407,7 @@ namespace AnotherGamepadPlus.Views
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            _mouseService.SaveCurrentSettings();
             _controllerService.Dispose();
             _mousePositionTimer.Stop();
         }

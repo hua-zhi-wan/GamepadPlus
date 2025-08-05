@@ -39,15 +39,15 @@
         <!-- 灵敏度设置 -->
         <Label Grid.Row="3" Grid.Column="0" Content="Sensitivity:" Margin="5"/>
         <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal" Margin="5">
-            <Slider x:Name="SensitivitySlider" Minimum="1" Maximum="30" Value="10.0" Width="200" 
+            <Slider x:Name="SensitivitySlider" Minimum="3" Maximum="30" Value="10" Width="200" 
                     ValueChanged="SensitivitySlider_ValueChanged"/>
-            <Label x:Name="SensitivityValueLabel" Content="10.0" Width="50" HorizontalAlignment="Center"/>
+            <Label x:Name="SensitivityValueLabel" Content="10" Width="50" HorizontalAlignment="Center"/>
         </StackPanel>
 
         <!-- 死区设置 -->
         <Label Grid.Row="4" Grid.Column="0" Content="Joystick Deadzone:" Margin="5"/>
         <StackPanel Grid.Row="4" Grid.Column="1" Orientation="Horizontal" Margin="5">
-            <Slider x:Name="DeadZoneSlider" Minimum="0.0" Maximum="0.5" Value="0.1" Width="200"
+            <Slider x:Name="DeadZoneSlider" Minimum="0.1" Maximum="0.5" Value="0.1" Width="200"
                     ValueChanged="DeadZoneSlider_ValueChanged"/>
             <Label x:Name="DeadZoneValueLabel" Content="0.1" Width="50" HorizontalAlignment="Center"/>
         </StackPanel>

@@ -1,5 +1,3 @@
-using System;
-
 namespace AnotherGamepadPlus.Helpers
 {
     public static class MathTool

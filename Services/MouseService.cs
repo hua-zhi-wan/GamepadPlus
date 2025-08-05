@@ -6,46 +6,58 @@ namespace AnotherGamepadPlus.Services
     public class MouseService
     {
         private readonly ScreenService _screenService;
-        private float _sensitivity = 10.0f;
+        private readonly SettingService _settingService;
+        private Settings _settings;
         private float _sensitivity_factor = 1.0f;
-        private float _deadZone = 0.1f;
 
         public float Sensitivity
         {
-            get => _sensitivity;
-            set => _sensitivity = Math.Max(1f, Math.Min(30.0f, value));
+            get => _settings.Sensitivity;
+            set => _settings.Sensitivity = Math.Max(3.0f, Math.Min(30.0f, value));
         }
 
         public float DeadZone
         {
-            get => _deadZone;
-            set => _deadZone = Math.Max(0.0f, Math.Min(0.5f, value));
+            get => _settings.DeadZone;
+            set => _settings.DeadZone = Math.Max(0.1f, Math.Min(0.5f, value));
         }
 
         public float SensitivityFactor
         {
             get => _sensitivity_factor;
-            set => _sensitivity_factor = Math.Max(0f, Math.Min(5f, value));
+            set => _sensitivity_factor = Math.Max(0.1f, Math.Min(5f, value));
         }
 
         public MouseService(ScreenService screenService)
         {
             _screenService = screenService;
+            _settingService = new SettingService();
+            LoadSettings();
+        }
+
+        public void LoadSettings()
+        {
+            _settings = _settingService.LoadSettings();
+        }
+
+        public void SaveCurrentSettings()
+        {
+            _settingService.SaveSettings(_settings);
         }
 
         public void MoveMouse(float xDelta, float yDelta)
         {
             // 原有移动逻辑保持不变
             float magnitude = MathF.Sqrt(xDelta * xDelta + yDelta * yDelta);
-            if (magnitude < _deadZone) return;
+            if (magnitude < DeadZone) return;
 
-            float scale = (magnitude - _deadZone) / (1.0f - _deadZone);
+            float scale = (magnitude - DeadZone) / (1.0f - DeadZone);
             xDelta = xDelta / magnitude * scale;
             yDelta = yDelta / magnitude * scale;
 
             var currentPos = Cursor.Position;
-            int newX = currentPos.X + (int)(xDelta * _sensitivity * _sensitivity_factor);
-            int newY = currentPos.Y - (int)(yDelta * _sensitivity * _sensitivity_factor);
+            int newX = currentPos.X + (int)(xDelta * Sensitivity * SensitivityFactor);
+            int newY = currentPos.Y - (int)(yDelta * Sensitivity * SensitivityFactor);
             var adjustedPos = _screenService.AdjustPositionToScreens(new Point(newX, newY));
             NativeMethods.SetCursorPos(adjustedPos.X, adjustedPos.Y);
         }
