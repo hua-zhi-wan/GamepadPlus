@@ -1,0 +1,56 @@
+# .github/workflows/build-msi.yml
+name: Build MSI Installer
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: '版本号（如 1.0.0）'
+        required: true
+        default: '1.0.0'
+
+jobs:
+  build-msi:
+    runs-on: windows-latest  # 必须使用 Windows 环境，VS Installer 仅支持 Windows
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 安装 .NET 8.0 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: 安装 Visual Studio Installer Projects 扩展
+        run: |
+          # 安装 VS 扩展（用于构建 .vdproj 安装项目）
+          choco install visualstudio2022-workload-installerbuildtools -y
+        shell: pwsh
+
+      - name: 还原项目依赖
+        run: dotnet restore agp.sln
+
+      - name: 构建安装项目（生成 MSI）
+        run: |
+          # 使用 MSBuild 构建安装项目（假设安装项目文件为 Installer.vdproj）
+          & "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Current\Bin\MSBuild.exe" `
+            Installer.vdproj `
+            /p:Configuration=Release `
+            /p:Platform=x64 `
+            /p:ProductVersion=${{ github.event.inputs.version }}
+        shell: pwsh
+        # 注意：如果安装项目不在根目录，需修改路径（如 Installer/Installer.vdproj）
+
+      - name: 查找生成的 MSI 文件
+        id: find_msi
+        run: |
+          $msiPath = Get-ChildItem -Path . -Filter *.msi -Recurse | Select-Object -First 1 -ExpandProperty FullName
+          echo "msi_path=$msiPath" >> $env:GITHUB_OUTPUT
+        shell: pwsh
+
+      - name: 上传 MSI 安装包
+        uses: actions/upload-artifact@v4
+        with:
+          name: agp-installer-v${{ github.event.inputs.version }}
+          path: ${{ steps.find_msi.outputs.msi_path }}
